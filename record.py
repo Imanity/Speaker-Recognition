@@ -20,7 +20,7 @@ def recordAudio(time, output_filename):
     frames = []
 
     for i in range(0, int(configs.rate / configs.chunk * time)):
-        data = stream.read(configs.chunk)
+        data = stream.read(configs.chunk, exception_on_overflow = False)
         frames.append(data)
 
     print("* done recording")
