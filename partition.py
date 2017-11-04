@@ -62,12 +62,23 @@ def partition(in_filename, output_filename):
     
     # Partition
     print(partitions)
+
+    # Output wav
+    wav_index = 0
+    for wav_segment_info in partitions:
+        if wav_segment_info[2] == 'speech':
+            wav_index += 1
+            begin = wav_segment_info[0] * configs.audioSegmentLength
+            end = wav_segment_info[1] * configs.audioSegmentLength
+            scipy.io.wavfile.write(output_filename + str(wav_index) + '.wav', sample_rate, data[begin:end])
     
+    '''
     # Plot
     plt.subplot(2, 1, 1)
     plt.title("1")
     plt.plot(wav_data)
     plt.show()
+    '''
 
 if __name__ == "__main__":
     partition('output.wav', 'part_')
