@@ -1,43 +1,73 @@
-import pyaudio
-import wave
-import configs
 import scipy.io.wavfile
 import numpy as np
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
+import configs
 
 def partition(in_filename, output_filename):
     (sample_rate, data) = scipy.io.wavfile.read(in_filename)
-    
-    begin = -1
-    blank_time = 0
-    partitions = []
 
+    # Lower sample rate
+    wav_data_origin = []
+    wav_data_index = 0
+    wav_data_value = 0
     for i in range(0, len(data)):
-        if data[i] > configs.min_volume:
-            blank_time = 0
-            if begin < 0:
-                begin = i
-        else:
-            blank_time += 1
-        
-        if blank_time >= configs.blank_time_gap and begin > 0:
-            end = i - configs.blank_time_gap
-            if end - begin > configs.min_continuous_time:
-                partitions.append((begin, end))
-            begin = -1
-    
-    '''
-    print(partitions)
+        wav_data_value += abs(data[i])
+        wav_data_index += 1
+        if wav_data_index >= configs.audioSegmentLength:
+            wav_data_origin.append(wav_data_value / wav_data_index)
+            wav_data_index = 0
+            wav_data_value = 0
+    if wav_data_index != 0:
+        wav_data_origin.append(wav_data_value / wav_data_index)
 
+    # Conv Layer
+    wav_data = []
+    curr_window_sum = 0
+    half_window_size = int(configs.windowSize / 2)
+    curr_window_size = half_window_size + 1
+    for i in range(0, curr_window_size):
+        curr_window_sum += wav_data_origin[i]
+    wav_data.append(curr_window_sum / curr_window_size)
+    for i in range(1, len(wav_data_origin)):
+        if i > half_window_size:
+            curr_window_sum -= wav_data_origin[i - half_window_size - 1]
+            curr_window_size -= 1
+        if i < len(wav_data_origin) - half_window_size:
+            curr_window_sum += wav_data_origin[i + half_window_size]
+            curr_window_size += 1
+        wav_data.append(curr_window_sum / curr_window_size)
+
+    # Partition
+    curr_start = 0
+    curr_status = 0
+    partitions = []
+    for i in range(0, len(wav_data)):
+        if wav_data[i] > configs.volumeThreshold:
+            if curr_status == 0:
+                if i > curr_start:
+                    partitions.append((curr_start, i - 1, 'empty'))
+                curr_status = 1
+                curr_start = i
+        else:
+            if curr_status == 1:
+                if i > curr_start:
+                    partitions.append((curr_start, i - 1, 'speech'))
+                curr_status = 0
+                curr_start = i
+    if len(wav_data) - 1 > curr_start:
+        if curr_status == 0:
+            partitions.append((curr_start, len(wav_data) - 1, 'empty'))
+        else:
+            partitions.append((curr_start, len(wav_data) - 1, 'speech'))
+    
+    # Partition
+    print(partitions)
+    
+    # Plot
     plt.subplot(2, 1, 1)
     plt.title("1")
-    plt.plot(data)
+    plt.plot(wav_data)
     plt.show()
-    '''
-    
-    for i in range(0, len(partitions)):
-        filename = output_filename + str(i) + '.wav'
-        scipy.io.wavfile.write(filename, sample_rate, data[(partitions[i][0]):(partitions[i][1])])
-    
+
 if __name__ == "__main__":
-    partition('dialogue.wav', 'part_')
+    partition('output.wav', 'part_')
