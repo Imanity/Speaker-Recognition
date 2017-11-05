@@ -40,25 +40,38 @@ def partition(in_filename, output_filename):
     # Partition
     curr_start = 0
     curr_status = 0
-    partitions = []
+    partitionOrigin = []
     for i in range(0, len(wav_data)):
         if wav_data[i] > configs.volumeThreshold:
             if curr_status == 0:
                 if i > curr_start:
-                    partitions.append((curr_start, i - 1, 'empty'))
+                    partitionOrigin.append({ 'start': curr_start, 'end': i - 1, 'myType': 'empty' })
                 curr_status = 1
                 curr_start = i
         else:
             if curr_status == 1:
                 if i > curr_start:
-                    partitions.append((curr_start, i - 1, 'speech'))
+                    partitionOrigin.append({ 'start': curr_start, 'end': i - 1, 'myType': 'speech' })
                 curr_status = 0
                 curr_start = i
     if len(wav_data) - 1 > curr_start:
         if curr_status == 0:
-            partitions.append((curr_start, len(wav_data) - 1, 'empty'))
+            partitionOrigin.append({ 'start': curr_start, 'end': len(wav_data) - 1, 'myType': 'empty' })
         else:
-            partitions.append((curr_start, len(wav_data) - 1, 'speech'))
+            partitionOrigin.append({ 'start': curr_start, 'end': len(wav_data) - 1, 'myType': 'speech'})
+    partition_tmp = []
+    for single in partitionOrigin:
+        single_len = single['end'] - single['start']
+        if single_len > configs.minSize:
+            partition_tmp.append(single)
+    partitions = []
+    last_type = -1
+    for single in partition_tmp:
+        if single['myType'] != last_type:
+            partitions.append(single)
+        else:
+            partitions[len(partitions) - 1]['end'] = single['end']
+        last_type = single['myType']
     
     # Partition
     print(partitions)
@@ -66,19 +79,19 @@ def partition(in_filename, output_filename):
     # Output wav
     wav_index = 0
     for wav_segment_info in partitions:
-        if wav_segment_info[2] == 'speech':
+        if wav_segment_info['myType'] == 'speech':
             wav_index += 1
-            begin = wav_segment_info[0] * configs.audioSegmentLength
-            end = wav_segment_info[1] * configs.audioSegmentLength
+            begin = wav_segment_info['start'] * configs.audioSegmentLength
+            end = wav_segment_info['end'] * configs.audioSegmentLength
             scipy.io.wavfile.write(output_filename + str(wav_index) + '.wav', sample_rate, data[begin:end])
     
-    '''
+    
     # Plot
     plt.subplot(2, 1, 1)
     plt.title("1")
     plt.plot(wav_data)
     plt.show()
-    '''
+    
 
 if __name__ == "__main__":
     partition('output.wav', 'part_')
