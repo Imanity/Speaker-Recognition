@@ -3,15 +3,15 @@ import numpy as np
 import configs
 import math
 import matplotlib.pyplot as plt
+from PIL import Image
 
-def wav2bmp(wav_filename):
+def wav2bmp(wav_filename, output_path):
     (sample_rate, wav_data) = wav.read(wav_filename)
 
     datas = []
     data_len = len(wav_data)
     n = int(data_len / configs.single_img_rate)
     imgs = np.zeros((n, configs.img_h, configs.img_w))
-    img_max = 0
 
     for i in range(0, n):
         datas.append(wav_data[i * configs.single_img_rate : (i + 1) * configs.single_img_rate])
@@ -21,16 +21,14 @@ def wav2bmp(wav_filename):
         for i in range(0, n):
             ftt_data = data[i * configs.single_pixel_rate : (i + 1) * configs.single_pixel_rate]
             ftt_res = np.fft.fft(ftt_data)
-            for j in range(0, configs.single_pixel_rate):
+            for j in range(0, n):
                 data_tmp = ftt_res[j]
                 data_tmp_val = math.sqrt(data_tmp.real * data_tmp.real + data_tmp.imag * data_tmp.imag)
-                if data_tmp_val > img_max:
-                    img_max = data_tmp_val
-                imgs[img_id][j][i] = data_tmp_val
-    
-    imgs = imgs * 255 / img_max
+                imgs[img_id][j][i] = data_tmp_val * 255.0 / configs.max_volume
+                if imgs[img_id][j][i] > 255.0:
+                    imgs[img_id][j][i] = 255.0
 
-    '''
+    '''     
     for img in imgs:
         fig = plt.figure()
         ax = fig.add_subplot(221)
@@ -38,7 +36,12 @@ def wav2bmp(wav_filename):
         plt.show()
     '''
 
+    for (imgId, img) in enumerate(imgs):
+        pilImg = Image.fromarray(img.astype(np.uint8))
+        pilImg.thumbnail((64, 64), Image.ANTIALIAS)
+        pilImg.save(output_path + str(imgId) + '.bmp', "BMP")
+    
     return imgs
 
 if __name__ == "__main__":
-    print(wav2bmp('output.wav'))
+    wav2bmp('E:/luoPredict.wav', 'E:/wavImg/luoPredict/')

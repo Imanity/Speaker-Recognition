@@ -37,4 +37,4 @@ def recordAudio(time, output_filename):
     wf.close()
 
 if __name__ == "__main__":
-    recordAudio(10, 'output.wav')
+    recordAudio(30, 'output.wav')

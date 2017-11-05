@@ -11,8 +11,8 @@ from scipy.cluster.vq import kmeans
 
 def getKMeansVec(array):
     (res, distortion)= kmeans(array, 1)
-    print(res.shape)
-    print(distortion)
+    #print(res.shape)
+    #print(distortion)
     return res
 
 def getCosineDistance(vec1, vec2):
@@ -54,5 +54,14 @@ def draw3d(mfccs):
 
 if __name__ == "__main__":
     #feature_extract(['wei_1.wav', 'wei_2.wav', 'tang_1.wav', 'tang_2.wav'])
-    getKMeansVec(extract("output.wav"))
+    a1 = getKMeansVec(extract("wei_1.wav"))
+    a2 = getKMeansVec(extract("wei_2.wav"))
+    b1 = getKMeansVec(extract("tang_1.wav"))
+    b2 = getKMeansVec(extract("tang_2.wav"))
+    print(getCosineDistance(a1, a2))
+    print(getCosineDistance(b1, b2))
+    print(getCosineDistance(a1, b1))
+    print(getCosineDistance(a1, b2))
+    print(getCosineDistance(a2, b1))
+    print(getCosineDistance(a2, b2))
 
