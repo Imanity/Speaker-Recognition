@@ -1,9 +1,27 @@
 from python_speech_features import mfcc
 import numpy as np
 import scipy.io.wavfile as wav
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+#import matplotlib.pyplot as plt
+#from mpl_toolkits.mplot3d import Axes3D
 from sklearn.decomposition import PCA
+
+from scipy import spatial
+from scipy.cluster.vq import kmeans
+
+
+def getKMeansVec(array):
+    (res, distortion)= kmeans(array, 1)
+    print(res.shape)
+    print(distortion)
+    return res
+
+def getCosineDistance(vec1, vec2):
+    return 1 - spatial.distance.cosine(vec1, vec2)
+
+def extract(file):
+    (rate,sig) = wav.read(file)
+    mfcc_feat = mfcc(sig, rate)
+    return mfcc_feat
 
 def feature_extract(files):
     mfccs = []
@@ -35,4 +53,6 @@ def draw3d(mfccs):
     plt.show()
 
 if __name__ == "__main__":
-    feature_extract(['wei_1.wav', 'wei_2.wav', 'tang_1.wav', 'tang_2.wav'])
+    #feature_extract(['wei_1.wav', 'wei_2.wav', 'tang_1.wav', 'tang_2.wav'])
+    getKMeansVec(extract("output.wav"))
+
