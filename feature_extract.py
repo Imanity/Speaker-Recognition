@@ -5,15 +5,47 @@ import scipy.io.wavfile as wav
 #from mpl_toolkits.mplot3d import Axes3D
 from sklearn.decomposition import PCA
 
-from scipy import spatial
-from scipy.cluster.vq import kmeans
+from scipy import spatial, stats
+from scipy.cluster.vq import kmeans, kmeans2
 
 
-def getKMeansVec(array):
-    (res, distortion)= kmeans(array, 1)
+def getKMeansVec(array, k = 1):
+    (res, distortion)= kmeans(array, k)
     #print(res.shape)
     #print(distortion)
     return res
+
+def getKMeansVec2(array, k = 1 ,minit ="points"):
+    (centroid, label)= kmeans2(array, k)
+    (res, count) = stats.mode(label)
+
+    minDistance = -1
+    minIndex = -1
+    groups = []
+    for i in range(k):
+        groups = []
+        for j in range(array.shape[0]):
+            if label[j] == i:
+                groups.append(array[j])
+        if len(groups) == 1 or len(groups) == 0:
+            continue
+        tmp = getAverageDistance(centroid[i], groups)
+        if minDistance == -1:
+            minDistance = tmp
+            minIndex = i
+        elif minDistance > tmp:
+            minDistance = tmp
+            minIndex = i
+
+    print(minIndex)
+    print(label)
+    return (centroid)
+
+def getAverageDistance(target, array):
+    dis = 0
+    for i in range(len(array)):
+        dis = dis + np.sqrt(np.sum(np.square(target - array[i])))
+    return dis/len(array)
 
 def getCosineDistance(vec1, vec2):
     return 1 - spatial.distance.cosine(vec1, vec2)
