@@ -39,7 +39,33 @@ def getKMeansVec2(array, k = 1 ,minit ="points"):
 
     print(minIndex)
     print(label)
-    return (centroid)
+    return centroid
+
+def getRecommandVec(array):
+    k = 3
+    (centroid, label)= kmeans2(array, k)
+    (res, count) = stats.mode(label)
+
+    minDistance = -1
+    minIndex = -1
+    groups = []
+    for i in range(k):
+        groups = []
+        for j in range(array.shape[0]):
+            if label[j] == i:
+                groups.append(array[j])
+        if len(groups) == 1 or len(groups) == 0:
+            continue
+        tmp = getAverageDistance(centroid[i], groups)
+        if minDistance == -1:
+            minDistance = tmp
+            minIndex = i
+        elif minDistance > tmp:
+            minDistance = tmp
+            minIndex = i
+    if minIndex == -1:
+        return centroid[res[0]]
+    return centroid[minIndex]
 
 def getAverageDistance(target, array):
     dis = 0

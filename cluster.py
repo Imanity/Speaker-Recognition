@@ -1,5 +1,5 @@
 import numpy as np
-from feature_extract import getKMeansVec, getKMeansVec2
+from feature_extract import getKMeansVec, getKMeansVec2, getRecommandVec
 
 tang_test = np.load("np/tang1.npy")
 tang_predict = np.load("np/tang2.npy")
@@ -29,3 +29,13 @@ print(getKMeansVec2(luo_test,3))
 
 print("-----------" + "tang3" + "------------")
 print(getKMeansVec2(np.load("np/tang3.npy"),3))
+
+a = []
+a.append(getRecommandVec(tang_predict))
+a.append(getRecommandVec(wei_predict))
+a.append(getRecommandVec(luo_predict))
+a.append(getRecommandVec(tang_test))
+a.append(getRecommandVec(wei_test))
+a.append(getRecommandVec(luo_test))
+a = np.array(a)
+np.save("test",a)

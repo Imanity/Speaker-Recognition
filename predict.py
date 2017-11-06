@@ -1,9 +1,11 @@
 import tensorflow as tf
 import numpy as np
 from PIL import Image
-from feature_extract import getKMeansVec, getCosineDistance
+from feature_extract import getKMeansVec, getCosineDistance, getRecommandVec
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+
+from wav2bmp import wavArray2bmpArray
 
 sess = tf.Session()
 saver = tf.train.import_meta_graph('E:/model/model.meta')
@@ -32,6 +34,19 @@ def draw(ps):
     for i, p in enumerate(ps):
         ax.scatter(p[:,0], p[:,1], p[:,2], c = colors[i])
     plt.show()
+vecs
+def getVecFromArray(bmps):
+    vecs = sess.run(prediction, feed_dict = {xs: bmps, keep_prob: 1})
+    return 
+
+def predict(audio_parts):
+    core_vecs = []
+    for i in audio_parts:
+        bmps = wavArray2bmpArray(audio_parts)
+        vecs = getVecFromArray(bmps)
+        vec = getRecommandVec(vecs)
+        core_vecs.append(vec)
+    return core_vecs
 
 if __name__ == "__main__":
     v1 = getVec('E:/wavImg/tangTest/', 0, 28)
