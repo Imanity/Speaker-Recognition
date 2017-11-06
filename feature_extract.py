@@ -67,6 +67,21 @@ def getRecommandVec(array):
         return centroid[res[0]]
     return centroid[minIndex]
 
+def getLabels(ararys):
+    k = 4
+    (centroid, label)= kmeans2(array, k)
+    #(res, count) = stats.mode(label)
+    #indexs = np.zeros(array.shape[0])
+    dicts = {}
+    index = 0
+    for i in label:
+        if dicts.get(str(i)) == None:
+            index = index+1
+            dicts[str(i)] = index
+    for i in range(len(label)):
+        label[i] = dicts.get(str(label[i]))
+    return label
+
 def getAverageDistance(target, array):
     dis = 0
     for i in range(len(array)):

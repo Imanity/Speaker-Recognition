@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 from PIL import Image
-from feature_extract import getKMeansVec, getCosineDistance, getRecommandVec
+from feature_extract import getKMeansVec, getCosineDistance, getRecommandVec, getLabels
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 
@@ -46,6 +46,7 @@ def predict(audio_parts):
         vecs = getVecFromArray(bmps)
         vec = getRecommandVec(vecs)
         core_vecs.append(vec)
+    labels = getLabels(core_vecs)
     return core_vecs
 
 if __name__ == "__main__":
