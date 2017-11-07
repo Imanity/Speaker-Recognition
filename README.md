@@ -20,7 +20,7 @@
 * 话者识别：首先使用快速傅里叶变换(fft)绘制音频的时频图, 然后使用cifar-10卷积神经网络训练, 再将预测结果进行k-means聚类得到无监督话者识别结果
 * 文本识别：调用百度api实现，运行过程需要联网
 
-![ftimg](/img/ftimg.png)
+![ftimg](/img/ftimg.bmp)
 
 ![network](/img/network.png)
 
