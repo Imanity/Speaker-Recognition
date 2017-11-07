@@ -5,7 +5,7 @@ rate = 16000
 audioSegmentLength = 160
 windowSize = 50
 volumeThreshold = 2000
-minSize = 50
+minSize = 100
 
 single_img_rate = 16384
 single_pixel_rate = 256

@@ -42,6 +42,10 @@ def getKMeansVec2(array, k = 1 ,minit ="points"):
     return centroid
 
 def getRecommandVec(array):
+    if len(array) == 1:
+        return array[0]
+    elif len(array) == 2:
+        return (array[0] + array[1]) / 2
     k = 3
     (centroid, label)= kmeans2(array, k)
     (res, count) = stats.mode(label)
@@ -67,9 +71,28 @@ def getRecommandVec(array):
         return centroid[res[0]]
     return centroid[minIndex]
 
-def getLabels(ararys):
+def getLabels(arrays):
+    if len(arrays) < 6: 
+        label = []
+        index = 0
+        for i, item in enumerate(arrays):
+            if len(label) == 0:
+                index = index + 1
+                label.append(index)
+                continue
+            flag = 0
+            for j in range(len(label)):
+                tem = np.sqrt(np.sum(np.square(arrays[j] - arrays[i])))
+                if tem < 0.6:
+                    label.append(label[j])
+                    flag = 1
+                    break
+            if flag == 0:
+                index = index + 1
+                label.append(index)
+        return label
     k = 4
-    (centroid, label)= kmeans2(array, k)
+    (centroid, label)= kmeans2(arrays, k)
     #(res, count) = stats.mode(label)
     #indexs = np.zeros(array.shape[0])
     dicts = {}

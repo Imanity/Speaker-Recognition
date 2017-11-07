@@ -1,13 +1,22 @@
 import os
+import sys
 from partition import getParts
 from predict import predict
 
+
 def analyzeAudio(filename, output):
     audio_parts = getParts(filename)
-    #for i in audio_parts:
-        #print(i.shape)
-    #result = predict(audio_parts)
-    #save_result = save(result, output)
+    result = predict(audio_parts)
+    save_result = save(result, output)
+
+def save(res, output):
+    labels = res[0]
+    texts = res[1]
+    outFile = open(output, 'w')
+    for i in range(0, len(labels)):
+        outFile.write('Speaker ' + str(labels[i]) + ' : ' + texts[i] + '\n')
+    outFile.close()
+
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
@@ -17,5 +26,5 @@ if __name__ == '__main__':
         print('File not exist')
         exit()
     print('Processing...')
-    analyzeAudio(sys.argv[1], output)
+    analyzeAudio(sys.argv[1], sys.argv[2])
     print('Done!')

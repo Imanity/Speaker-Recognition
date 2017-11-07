@@ -9,19 +9,33 @@ def getBMP(path, num):
     bmps = []
     labels = []
     for i in range(0, num):
-        foldertType = random.randint(1, 2)
-        folderId = random.randint(1, 3)
-        imgId = random.randint(0, 291)
-        names = ['tang', 'wei', 'luo']
-        img = Image.open(path + names[folderId - 1] + str(foldertType) + '/' + str(imgId) + '.bmp')
-        bmp = np.array(img)
-        bmps.append(bmp)
-        if folderId == 1:
-            labels.append([1.0, 0.0, 0.0])
-        elif folderId == 2:
-            labels.append([0.0, 1.0, 0.0])
+        foldertType = random.randint(1, 3)
+        if foldertType == 3:
+            folderId = random.randint(1, 3)
+            imgId = random.randint(0, 33)
+            names = ['tang', 'wei', 'luo']
+            img = Image.open(path + names[folderId - 1] + '/' + str(imgId) + '.bmp')
+            bmp = np.array(img)
+            bmps.append(bmp)
+            if folderId == 1:
+                labels.append([1.0, 0.0, 0.0])
+            elif folderId == 2:
+                labels.append([0.0, 1.0, 0.0])
+            else:
+                labels.append([0.0, 0.0, 1.0])
         else:
-            labels.append([0.0, 0.0, 1.0])
+            folderId = random.randint(1, 3)
+            imgId = random.randint(0, 291)
+            names = ['tang', 'wei', 'luo']
+            img = Image.open(path + names[folderId - 1] + str(foldertType) + '/' + str(imgId) + '.bmp')
+            bmp = np.array(img)
+            bmps.append(bmp)
+            if folderId == 1:
+                labels.append([1.0, 0.0, 0.0])
+            elif folderId == 2:
+                labels.append([0.0, 1.0, 0.0])
+            else:
+                labels.append([0.0, 0.0, 1.0])
     return np.array(bmps), np.array(labels)
 
 def getTestBMP(path):
@@ -39,6 +53,21 @@ def getTestBMP(path):
         labels.append([0.0, 1.0, 0.0])
     for i in range(0, 28):
         img = Image.open(path + 'luoTest/' + str(i) + '.bmp')
+        bmp = np.array(img)
+        bmps.append(bmp)
+        labels.append([0.0, 0.0, 1.0])
+    for i in range(0, 24):
+        img = Image.open(path + 'tangtest1/' + str(i) + '.bmp')
+        bmp = np.array(img)
+        bmps.append(bmp)
+        labels.append([1.0, 0.0, 0.0])
+    for i in range(0, 14):
+        img = Image.open(path + 'weitest1/' + str(i) + '.bmp')
+        bmp = np.array(img)
+        bmps.append(bmp)
+        labels.append([0.0, 1.0, 0.0])
+    for i in range(0, 21):
+        img = Image.open(path + 'luotest1/' + str(i) + '.bmp')
         bmp = np.array(img)
         bmps.append(bmp)
         labels.append([0.0, 0.0, 1.0])
@@ -115,7 +144,7 @@ sess = tf.Session()
 
 sess.run(tf.global_variables_initializer())
 
-for i in range(1000):
+for i in range(2000):
     batch_xs, batch_ys = getBMP('E:/wavImg/', 100)
     sess.run(train_step, feed_dict={xs: batch_xs, ys: batch_ys, keep_prob: 0.5})
     if i % 100 == 0:

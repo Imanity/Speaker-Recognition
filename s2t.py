@@ -33,10 +33,10 @@ def dump_res(buf):
       
 ## post audio to server  
 def use_cloud(token,wav_path):  
-    fp = wave.open(wav_path, 'rb')  
+    fp = wave.open(wav_path, 'rb')
     nf = fp.getnframes()  
     f_len = nf * 2  
-    audio_data = fp.readframes(nf)  
+    audio_data = fp.readframes(nf)
     
     global MAC_cuid  
     cuid = MAC_cuid
@@ -65,5 +65,5 @@ def s2t_baiduapi(wav_path):
 
 
 if __name__ == "__main__":  
-    data = s2t_baiduapi('part_1.wav')
+    data = s2t_baiduapi('output.wav')
     print(data)

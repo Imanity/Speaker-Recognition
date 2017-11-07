@@ -174,7 +174,8 @@ def getParts(in_filename):
             begin = wav_segment_info['start'] * configs.audioSegmentLength
             end = wav_segment_info['end'] * configs.audioSegmentLength
             results.append(data[begin:end])
-            #scipy.io.wavfile.write(output_filename + str(wav_index) + '.wav', sample_rate, data[begin:end])
+            
+            scipy.io.wavfile.write('part_' + str(wav_index) + '.wav', 16000, data[begin:end])
     return results
 
 if __name__ == "__main__":

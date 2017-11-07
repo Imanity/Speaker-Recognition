@@ -51,7 +51,7 @@ def wavArray2bmpArray(wav_data):
 
     for i in range(0, n):
         datas.append(wav_data[i * configs.single_img_rate : (i + 1) * configs.single_img_rate])
-
+    
     for (img_id, data) in enumerate(datas):
         n = int(configs.single_img_rate / configs.single_pixel_rate)
         for i in range(0, n):
@@ -63,9 +63,8 @@ def wavArray2bmpArray(wav_data):
                 imgs[img_id][j][i] = data_tmp_val * 255.0 / configs.max_volume
                 if imgs[img_id][j][i] > 255.0:
                     imgs[img_id][j][i] = 255.0
-
-
+    
     return imgs
 
 if __name__ == "__main__":
-    wav2bmp('E:/luoPredict.wav', 'E:/wavImg/luoPredict/')
+    wav2bmp('E:/tang3.wav', 'E:/wavImg/tang3/')

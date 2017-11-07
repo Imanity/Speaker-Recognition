@@ -1,6 +1,7 @@
 import pyaudio
 import wave
 import configs
+import sys
 
 def recordAudio(time, output_filename):
     FORMAT = pyaudio.paInt16
@@ -37,4 +38,8 @@ def recordAudio(time, output_filename):
     wf.close()
 
 if __name__ == "__main__":
-    recordAudio(30, 'output.wav')
+    if len(sys.argv) < 3:
+        print('Error arguments! Please used as "python record.py TIME OUTPUT_FILE"')
+        exit()
+    recordAudio(int(sys.argv[1]), sys.argv[2])
+    
